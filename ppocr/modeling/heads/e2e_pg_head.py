@@ -178,7 +178,7 @@ class PGHead(nn.Layer):
             name="conv_f_char{}".format(5))
         self.conv3 = nn.Conv2D(
             in_channels=256,
-            out_channels=37,
+            out_channels=2623,
             kernel_size=3,
             stride=1,
             padding=1,
