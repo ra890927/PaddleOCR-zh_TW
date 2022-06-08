@@ -1,6 +1,6 @@
 Global:
   use_gpu: True
-  epoch_num: 600
+  epoch_num: 300
   log_smooth_window: 20
   print_batch_step: 10
   save_model_dir: ./output/pgnet_ai_cup_totaltext/
@@ -66,8 +66,8 @@ Metric:
 Train:
   dataset:
     name: PGDataSet
-    data_dir: ./train_data/train_AI_CUP/train
-    label_file_list: [./train_data/train_AI_CUP/train/train.txt]
+    data_dir: ./train_data/train/train
+    label_file_list: [./train_data/train/train/train.txt]
     ratio_list: [1.0]
     transforms:
       - DecodeImage: # load image
@@ -75,7 +75,7 @@ Train:
           channel_first: False
       - E2ELabelEncodeTrain:
       - PGProcessTrain:
-          batch_size: 1  # same as loader: batch_size_per_card
+          batch_size: 4  # same as loader: batch_size_per_card
           min_crop_size: 24
           min_text_size: 4
           max_text_size: 512
@@ -84,14 +84,14 @@ Train:
   loader:
     shuffle: True
     drop_last: True
-    batch_size_per_card: 1
+    batch_size_per_card: 4
     num_workers: 16
 
 Eval:
   dataset:
     name: PGDataSet
-    data_dir: ./train_data/train_AI_CUP/test
-    label_file_list: [./train_data/train_AI_CUP/test/test.txt]
+    data_dir: ./train_data/train/test
+    label_file_list: [./train_data/train/test/test.txt]
     transforms:
       - DecodeImage: # load image
           img_mode: RGB
