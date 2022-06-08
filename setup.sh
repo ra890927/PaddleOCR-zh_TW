@@ -12,7 +12,8 @@ apt-get install nano -y
 # install python
 apt-get install python3.8 -y
 apt-get install python3-pip -y
+apt-get install python3-opencv -y
 
 # install paddle requirement
-python -m pip install paddlepaddle-gpu==2.3.0.post101 -f https://www.paddlepaddle.org.cn/whl/linux/mkl/avx/stable.html
+python3 -m pip install paddlepaddle-gpu==2.3.0.post101 -f https://www.paddlepaddle.org.cn/whl/linux/mkl/avx/stable.html
 python3 -m pip install -r requirement.txt

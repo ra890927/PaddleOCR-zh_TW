@@ -34,3 +34,6 @@ test_tipc/web/node_modules/
 
 # Train data
 train_data/
+
+# Log
+log/
