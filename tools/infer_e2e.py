@@ -30,6 +30,7 @@ os.environ["FLAGS_allocator_strategy"] = 'auto_growth'
 import cv2
 import json
 import paddle
+from PIL import Image, ImageDraw, ImageFont
 
 from ppocr.data import create_operators, transform
 from ppocr.modeling.architectures import build_model
@@ -38,6 +39,17 @@ from ppocr.utils.save_load import load_model
 from ppocr.utils.utility import get_image_file_list
 import tools.program as program
 
+def cv2AddChineseText(img, text, position, textColor=(0, 255, 0), textSize=30):
+    if (isinstance(img, np.ndarray)):  # 判断是否OpenCV图片类型
+        img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    # 创建一个可以在给定图像上绘图的对象
+    draw = ImageDraw.Draw(img)
+    # 字体的格式
+    fontStyle = ImageFont.truetype("./tools/NotoSansTC-Regular.otf", textSize, encoding="utf-8")
+    # 绘制文本
+    draw.text(position, text, textColor, font=fontStyle)
+    # 转换回OpenCV格式
+    return cv2.cvtColor(np.asarray(img), cv2.COLOR_RGB2BGR)
 
 def draw_e2e_res(dt_boxes, strs, config, img, img_name):
     if len(dt_boxes) > 0:
@@ -45,14 +57,21 @@ def draw_e2e_res(dt_boxes, strs, config, img, img_name):
         for box, str in zip(dt_boxes, strs):
             box = box.astype(np.int32).reshape((-1, 1, 2))
             cv2.polylines(src_im, [box], True, color=(255, 255, 0), thickness=2)
-            cv2.putText(
-                src_im,
-                str,
-                org=(int(box[0, 0, 0]), int(box[0, 0, 1])),
-                fontFace=cv2.FONT_HERSHEY_COMPLEX,
-                fontScale=0.7,
-                color=(0, 255, 0),
-                thickness=1)
+#             cv2.putText(
+#                 src_im,
+#                 str,
+#                 org=(int(box[0, 0, 0]), int(box[0, 0, 1])),
+#                 fontFace=cv2.FONT_HERSHEY_COMPLEX,
+#                 fontScale=0.7,
+#                 color=(0, 255, 0),
+#                 thickness=1)
+            src_im = cv2AddChineseText(
+                img=src_im,
+                text=str,
+                position=(int(box[0, 0, 0]), int(box[0, 0, 1])),
+                textSize=24,
+                textColor=(0, 255, 0)
+            )
         save_det_path = os.path.dirname(config['Global'][
             'save_res_path']) + "/e2e_results/"
         if not os.path.exists(save_det_path):
@@ -110,7 +129,7 @@ def main():
                 tmp_json = {"transcription": str}
                 tmp_json['points'] = poly.tolist()
                 dt_boxes_json.append(tmp_json)
-            otstr = file + "\t" + json.dumps(dt_boxes_json) + "\n"
+            otstr = file + "\t" + json.dumps(dt_boxes_json, ensure_ascii=False) + "\n"
             fout.write(otstr.encode())
             src_img = cv2.imread(file)
             draw_e2e_res(points, strs, config, src_img, file)

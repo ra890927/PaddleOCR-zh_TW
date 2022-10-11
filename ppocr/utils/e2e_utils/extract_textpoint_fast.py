@@ -115,7 +115,7 @@ def ctc_decoder_for_image(gather_info_list,
             continue
         dst_str, xys_list = instance_ctc_greedy_decoder(
             gather_info, logits_map, pts_num=pts_num)
-        dst_str_readable = ''.join([Lexicon_Table[idx] if idx < len(Lexicon_Table) else '?' for idx in dst_str])
+        dst_str_readable = ''.join([Lexicon_Table[idx] for idx in dst_str])
         if len(dst_str_readable) < 2:
             continue
         decoder_str.append(dst_str_readable)
