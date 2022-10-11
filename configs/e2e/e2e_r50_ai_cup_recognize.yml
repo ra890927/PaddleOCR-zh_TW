@@ -1,9 +1,9 @@
 Global:
   use_gpu: True
-  epoch_num: 300
+  epoch_num: 100
   log_smooth_window: 20
   print_batch_step: 10
-  save_model_dir: ./output/pgnet_ai_cup_totaltext/
+  save_model_dir: ./output/pgnet_ai_cup_recognize/
   save_epoch_step: 10
   # evaluation is run every 0 iterationss after the 1000th iteration
   eval_batch_step: [ 0, 1000 ]
@@ -38,7 +38,7 @@ Loss:
   tcl_bs: 64
   max_text_length: 50 # the same as Global: max_text_length
   max_text_nums: 30 # the same as Global：max_text_nums
-  pad_num: 2622 # the length of dict for pad
+  pad_num: 2623 # the length of dict for pad
 
 Optimizer:
   name: Adam
@@ -66,8 +66,8 @@ Metric:
 Train:
   dataset:
     name: PGDataSet
-    data_dir: ./train_data/ai_cup/train
-    label_file_list: [./train_data/ai_cup/train/train.txt]
+    data_dir: ./train_data/recognize/train
+    label_file_list: [./train_data/recognize/train/train.txt]
     ratio_list: [1.0]
     transforms:
       - DecodeImage: # load image
@@ -75,7 +75,7 @@ Train:
           channel_first: False
       - E2ELabelEncodeTrain:
       - PGProcessTrain:
-          batch_size: 16  # same as loader: batch_size_per_card
+          batch_size: 14  # same as loader: batch_size_per_card
           min_crop_size: 24
           min_text_size: 4
           max_text_size: 512
@@ -84,17 +84,17 @@ Train:
   loader:
     shuffle: True
     drop_last: True
-    batch_size_per_card: 16
-    num_workers: 32
+    batch_size_per_card: 14
+    num_workers: 16
 
 Eval:
   dataset:
     name: PGDataSet
-    data_dir: ./train_data/ai_cup/test
-    label_file_list: [./train_data/ai_cup/test/test.txt]
+    data_dir: ./train_data/recognize/test
+    label_file_list: [./train_data/recognize/test/test.txt]
     transforms:
       - DecodeImage: # load image
-          img_mode: RGB
+          img_mode: BGR
           channel_first: False
       - E2ELabelEncodeTest:
       - E2EResizeForTest:
